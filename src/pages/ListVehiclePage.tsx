@@ -18,7 +18,7 @@ const ListVehiclePage: React.FC = () => {
     image: '',
     seats: '',
     transmission: 'automatic',
-    fuelType: 'petrol',
+    fuel_type: 'petrol',  // Changed from fuelType to fuel_type
     location: '',
     description: ''
   });
@@ -194,8 +194,8 @@ const ListVehiclePage: React.FC = () => {
                   Fuel Type
                 </label>
                 <select
-                  name="fuelType"
-                  value={formData.fuelType}
+                  name="fuel_type"  // Changed from fuelType to fuel_type
+                  value={formData.fuel_type}  // Changed from fuelType to fuel_type
                   onChange={handleChange}
                   required
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"

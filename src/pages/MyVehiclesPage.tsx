@@ -23,6 +23,7 @@ interface Vehicle {
 const MyVehiclesPage: React.FC = () => {
   const { user } = useAuth();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [showAvailable, setShowAvailable] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -59,11 +60,15 @@ const MyVehiclesPage: React.FC = () => {
         .eq('id', id);
 
       if (deleteError) throw deleteError;
-      setVehicles(vehicles.filter(v => v.id !== id));
+      setVehicles(vehicles.filter((v) => v.id !== id));
     } catch (err: any) {
       setError(err.message);
     }
   };
+
+  const filteredVehicles = vehicles.filter((vehicle) =>
+    showAvailable ? vehicle.available : !vehicle.available
+  );
 
   const toggleAvailability = async (id: string, currentStatus: boolean) => {
     try {
@@ -73,33 +78,49 @@ const MyVehiclesPage: React.FC = () => {
         .eq('id', id);
 
       if (updateError) throw updateError;
-      setVehicles(vehicles.map(v => 
-        v.id === id ? { ...v, available: !currentStatus } : v
-      ));
+      setVehicles(
+        vehicles.map((v) =>
+          v.id === id ? { ...v, available: !currentStatus } : v
+        )
+      );
     } catch (err: any) {
       setError(err.message);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-16 h-16 border-4 border-orange-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900">My Vehicles</h1>
-          <Link
-            to="/list-vehicle"
-            className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-2 rounded-md hover:from-red-700 hover:to-orange-600 transition-colors"
-          >
-            List New Vehicle
-          </Link>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setShowAvailable(true)}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                showAvailable
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Available Vehicles
+            </button>
+            <button
+              onClick={() => setShowAvailable(false)}
+              className={`px-4 py-2 rounded-md transition-colors ${
+                !showAvailable
+                  ? 'bg-red-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Unavailable Vehicles
+            </button>
+            <Link
+              to="/list-vehicle"
+              className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-2 rounded-md hover:from-red-700 hover:to-orange-600 transition-colors"
+            >
+              List New Vehicle
+            </Link>
+          </div>
         </div>
 
         {error && (
@@ -108,12 +129,16 @@ const MyVehiclesPage: React.FC = () => {
           </div>
         )}
 
-        {vehicles.length === 0 ? (
+        {filteredVehicles.length === 0 ? (
           <div className="bg-white rounded-lg shadow-md p-8 text-center">
             <CarIcon size={48} className="mx-auto text-gray-400 mb-4" />
-            <h3 className="text-xl font-medium text-gray-900 mb-2">No vehicles listed</h3>
+            <h3 className="text-xl font-medium text-gray-900 mb-2">
+              No {showAvailable ? 'available' : 'unavailable'} vehicles
+            </h3>
             <p className="text-gray-600 mb-6">
-              You haven't listed any vehicles yet. Start by listing your first vehicle.
+              {showAvailable
+                ? "You don't have any available vehicles at the moment."
+                : "You don't have any unavailable vehicles at the moment."}
             </p>
             <Link
               to="/list-vehicle"
@@ -124,7 +149,7 @@ const MyVehiclesPage: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vehicles.map((vehicle) => (
+            {filteredVehicles.map((vehicle) => (
               <div
                 key={vehicle.id}
                 className="bg-white rounded-lg shadow-md overflow-hidden"
@@ -157,7 +182,9 @@ const MyVehiclesPage: React.FC = () => {
                   <div className="flex justify-between items-center mb-4">
                     <p className="font-bold text-2xl text-gray-900">
                       ${vehicle.price}
-                      <span className="text-sm text-gray-500 font-normal">/day</span>
+                      <span className="text-sm text-gray-500 font-normal">
+                        /day
+                      </span>
                     </p>
                   </div>
 
@@ -177,14 +204,18 @@ const MyVehiclesPage: React.FC = () => {
                       </button>
                     </div>
                     <button
-                      onClick={() => toggleAvailability(vehicle.id, vehicle.available)}
+                      onClick={() =>
+                        toggleAvailability(vehicle.id, vehicle.available)
+                      }
                       className={`px-4 py-2 rounded-md ${
                         vehicle.available
                           ? 'bg-red-100 text-red-700 hover:bg-red-200'
                           : 'bg-green-100 text-green-700 hover:bg-green-200'
                       } transition-colors`}
                     >
-                      {vehicle.available ? 'Mark Unavailable' : 'Mark Available'}
+                      {vehicle.available
+                        ? 'Mark Unavailable'
+                        : 'Mark Available'}
                     </button>
                   </div>
                 </div>
@@ -197,4 +228,4 @@ const MyVehiclesPage: React.FC = () => {
   );
 };
 
-export default MyVehiclesPage
+export default MyVehiclesPage;

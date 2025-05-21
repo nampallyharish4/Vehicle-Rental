@@ -1,6 +1,7 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import axios from 'axios';
 
 interface AuthContextType {
   user: User | null;
@@ -42,11 +43,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       setLoading(true);
       setError(null);
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      const response = await axios.post('http://localhost:5002/api/users/login', {
+        email,
+        password
+      });
       
-      if (error) throw error;
+      const { token, user } = response.data;
+      localStorage.setItem('token', token);
+      setUser(user);
+      setIsAuthenticated(true);
+      
+      // Redirect to the home page after successful login
+      window.location.href = 'http://localhost:5173/';
     } catch (err: any) {
-      setError(err.message);
+      setError(err.response?.data?.message || 'Invalid email or password');
+      throw err;
     } finally {
       setLoading(false);
     }
