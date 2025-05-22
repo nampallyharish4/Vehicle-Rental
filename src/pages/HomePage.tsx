@@ -9,7 +9,7 @@ const HomePage: React.FC = () => {
       id: '1',
       name: 'Tesla Model 3',
       category: 'Electric',
-      price: 150,
+      price: 12000,
       image: 'https://images.pexels.com/photos/5667323/pexels-photo-5667323.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
       available: true
     },
@@ -108,7 +108,7 @@ const HomePage: React.FC = () => {
                   </div>
                   <div className="flex justify-between items-center mb-4">
                     <p className="font-bold text-2xl text-gray-900">
-                      ${vehicle.price}
+                      ₹{vehicle.price}
                       <span className="text-sm text-gray-500 font-normal">/day</span>
                     </p>
                   </div>
