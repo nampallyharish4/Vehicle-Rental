@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Car as CarIcon, SlidersHorizontal } from 'lucide-react';
+import { Car as CarIcon, SlidersHorizontal, Users, Fuel, Settings } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 interface Vehicle {
   id: string;
@@ -18,6 +19,7 @@ interface Vehicle {
 }
 
 const VehiclesPage: React.FC = () => {
+  const navigate = useNavigate();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -49,6 +51,10 @@ const VehiclesPage: React.FC = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleRentNow = (vehicleId: string) => {
+    navigate(`/booking/${vehicleId}`);
   };
 
   const filteredAndSortedVehicles = () => {
@@ -200,13 +206,13 @@ const VehiclesPage: React.FC = () => {
                 <p className="text-gray-600">No vehicles match your selected filters. Try adjusting your criteria.</p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {filteredAndSortedVehicles().map((vehicle) => (
                   <div
                     key={vehicle.id}
                     className="bg-white rounded-lg shadow-md overflow-hidden"
                   >
-                    <div className="relative h-48">
+                    <div className="relative h-32">
                       <img
                         src={vehicle.image}
                         alt={vehicle.name}
@@ -217,22 +223,40 @@ const VehiclesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <div className="p-6">
+                    <div className="p-4">
                       <div className="flex justify-between items-start mb-2">
-                        <h3 className="text-xl font-semibold">{vehicle.name}</h3>
+                        <h3 className="text-lg font-semibold">{vehicle.name}</h3>
                         <span className="text-sm bg-orange-100 text-orange-800 px-2 py-1 rounded">
                           {vehicle.category}
                         </span>
                       </div>
 
-                      <p className="text-gray-600 mb-4">{vehicle.location}</p>
+                      <p className="text-gray-600 text-sm mb-3">{vehicle.location}</p>
+
+                      <div className="grid grid-cols-3 gap-2 mb-3">
+                        <div className="flex items-center gap-1">
+                          <Users size={16} className="text-gray-500" />
+                          <span className="text-xs text-gray-600">{vehicle.seats} Seats</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Settings size={16} className="text-gray-500" />
+                          <span className="text-xs text-gray-600">{vehicle.transmission}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <Fuel size={16} className="text-gray-500" />
+                          <span className="text-xs text-gray-600">{vehicle.fuel_type}</span>
+                        </div>
+                      </div>
 
                       <div className="flex justify-between items-center">
-                        <p className="font-bold text-2xl text-gray-900">
+                        <p className="font-bold text-xl text-gray-900">
                           ₹{vehicle.price}
                           <span className="text-sm text-gray-500 font-normal">/day</span>
                         </p>
-                        <button className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-2 rounded-md hover:from-red-700 hover:to-orange-600 transition-colors">
+                        <button 
+                          onClick={() => handleRentNow(vehicle.id)}
+                          className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-4 py-1.5 rounded-md hover:from-red-700 hover:to-orange-600 transition-colors text-sm"
+                        >
                           Rent Now
                         </button>
                       </div>
