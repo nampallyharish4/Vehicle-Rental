@@ -229,7 +229,7 @@ const VehiclesPage: React.FC = () => {
 
                       <div className="flex justify-between items-center">
                         <p className="font-bold text-2xl text-gray-900">
-                          ${vehicle.price}
+                          ₹{vehicle.price}
                           <span className="text-sm text-gray-500 font-normal">/day</span>
                         </p>
                         <button className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-6 py-2 rounded-md hover:from-red-700 hover:to-orange-600 transition-colors">

@@ -123,7 +123,7 @@ const VehicleDetailPage: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center">
-              <span className="text-3xl font-bold text-gray-900">${vehicle.price}</span>
+              <span className="text-3xl font-bold text-gray-900">₹{vehicle.price}</span>
               <span className="text-gray-500 ml-1">/day</span>
             </div>
           </div>
@@ -285,7 +285,7 @@ const VehicleDetailPage: React.FC = () => {
                 <div className="bg-gray-50 p-4 rounded-md mb-6">
                   <div className="flex justify-between mb-2">
                     <span className="text-gray-600">Base rate:</span>
-                    <span>${vehicle.price}/day</span>
+                    <span>₹{vehicle.price}/day</span>
                   </div>
                   <div className="flex justify-between mb-2">
                     <span className="text-gray-600">Number of days:</span>

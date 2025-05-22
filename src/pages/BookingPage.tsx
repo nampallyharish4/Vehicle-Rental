@@ -151,7 +151,7 @@ const BookingPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500">Total Cost</p>
-                  <p className="font-bold">${calculateTotalPrice() + 60}</p>
+                  <p className="font-bold">₹{calculateTotalPrice() + 4800}</p>
                 </div>
               </div>
             </div>
