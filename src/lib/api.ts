@@ -2,15 +2,33 @@ import { supabase } from './supabase';
 import { Database } from './database.types';
 
 export type Vehicle = Database['public']['Tables']['vehicles']['Row'];
-export type Profile = Database['public']['Tables']['profiles']['Row'];
 
 // Vehicles API
-export const getVehicles = async (): Promise<{ data: Vehicle[] | null; error: any }> => {
-  const { data, error } = await supabase
+export const getVehicles = async (filters?: {
+  category?: string;
+  location?: string;
+  price_min?: number;
+  price_max?: number;
+}): Promise<{ data: Vehicle[] | null; error: any }> => {
+  let query = supabase
     .from('vehicles')
     .select('*')
     .order('created_at', { ascending: false });
-  
+
+  if (filters?.category) {
+    query = query.eq('category', filters.category);
+  }
+  if (filters?.location) {
+    query = query.ilike('location', `%${filters.location}%`);
+  }
+  if (filters?.price_min) {
+    query = query.gte('price', filters.price_min);
+  }
+  if (filters?.price_max) {
+    query = query.lte('price', filters.price_max);
+  }
+
+  const { data, error } = await query;
   return { data, error };
 };
 
@@ -34,7 +52,7 @@ export const getUserVehicles = async (userId: string): Promise<{ data: Vehicle[]
   return { data, error };
 };
 
-export const createVehicle = async (vehicle: Omit<Vehicle, 'id' | 'created_at' | 'updated_at'>): Promise<{ data: Vehicle | null; error: any }> => {
+export const createVehicle = async (vehicle: Omit<Vehicle, 'id' | 'created_at'>): Promise<{ data: Vehicle | null; error: any }> => {
   const { data, error } = await supabase
     .from('vehicles')
     .insert(vehicle)
@@ -64,30 +82,11 @@ export const deleteVehicle = async (id: string): Promise<{ error: any }> => {
   return { error };
 };
 
-// Profile API
-export const getProfile = async (): Promise<{ data: Profile | null; error: any }> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) return { data: null, error: 'User not authenticated' };
-  
+export const toggleVehicleAvailability = async (id: string, available: boolean): Promise<{ data: Vehicle | null; error: any }> => {
   const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', user.id)
-    .single();
-  
-  return { data, error };
-};
-
-export const updateProfile = async (updates: Partial<Profile>): Promise<{ data: Profile | null; error: any }> => {
-  const { data: { user } } = await supabase.auth.getUser();
-  
-  if (!user) return { data: null, error: 'User not authenticated' };
-  
-  const { data, error } = await supabase
-    .from('profiles')
-    .update(updates)
-    .eq('id', user.id)
+    .from('vehicles')
+    .update({ available })
+    .eq('id', id)
     .select()
     .single();
   

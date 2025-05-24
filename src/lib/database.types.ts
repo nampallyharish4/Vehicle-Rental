@@ -9,29 +9,10 @@ export type Json =
 export interface Database {
   public: {
     Tables: {
-      profiles: {
-        Row: {
-          id: string
-          name: string | null
-          created_at: string
-          updated_at: string
-        }
-        Insert: {
-          id: string
-          name?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-        Update: {
-          id?: string
-          name?: string | null
-          created_at?: string
-          updated_at?: string
-        }
-      }
       vehicles: {
         Row: {
           id: string
+          created_at: string
           user_id: string
           name: string
           category: string
@@ -43,12 +24,11 @@ export interface Database {
           fuel_type: string
           location: string
           description: string
-          features: string[] | null
-          created_at: string
-          updated_at: string
+          features: string[]
         }
         Insert: {
           id?: string
+          created_at?: string
           user_id: string
           name: string
           category: string
@@ -60,12 +40,11 @@ export interface Database {
           fuel_type: string
           location: string
           description: string
-          features?: string[] | null
-          created_at?: string
-          updated_at?: string
+          features?: string[]
         }
         Update: {
           id?: string
+          created_at?: string
           user_id?: string
           name?: string
           category?: string
@@ -77,9 +56,7 @@ export interface Database {
           fuel_type?: string
           location?: string
           description?: string
-          features?: string[] | null
-          created_at?: string
-          updated_at?: string
+          features?: string[]
         }
       }
     }
